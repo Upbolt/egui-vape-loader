@@ -1,7 +1,8 @@
 use crate::widgets::progress_bar::ProgressBar;
 use eframe::{
     egui::{
-        self, Button, Context, FontData, FontDefinitions, Image, Label, Layout, RichText, Sense, Ui,
+        self, Button, Context, FontData, FontDefinitions, Image, Label, Layout, RichText,
+        ScrollArea, Sense, TextEdit, Ui,
     },
     emath::Align,
     epaint::{Color32, FontFamily, Pos2, Rect, Rounding, Vec2},
@@ -11,6 +12,7 @@ use egui_extras::RetainedImage;
 
 pub(crate) struct Vape {
     status: Status,
+    code: String,
     logo: RetainedImage,
     top_corner: RetainedImage,
     bottom_corner: RetainedImage,
@@ -31,6 +33,7 @@ impl Vape {
 
         Box::new(Self {
             status: Status::Loading,
+            code: String::new(),
             logo: Self::load_logo(),
             top_corner,
             bottom_corner,
@@ -174,6 +177,10 @@ fn loader(app_state: &mut Vape, ui: &mut Ui, ctx: &Context, frame: &mut Frame) {
         ui.add_space(137.);
 
         let response = ui.add(logo);
+
+        ScrollArea::vertical().show(ui, |ui| {
+            ui.add(TextEdit::multiline(&mut app_state.code).code_editor());
+        });
 
         if response.interact(Sense::click()).clicked() {
             swap_between_screens(app_state);
